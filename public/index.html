@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>UJORA AI Live Chat</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body {
+      font-family: Arial;
+      background: linear-gradient(135deg, #0077b6, #00b4d8);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .chat-container {
+      width: 420px;
+      height: 600px;
+      background: white;
+      border-radius: 20px;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+    }
+    .header {
+      background: #0077b6;
+      color: white;
+      padding: 15px;
+      text-align: center;
+      border-top-left-radius: 20px;
+      border-top-right-radius: 20px;
+      font-weight: bold;
+    }
+    .chat-box {
+      flex: 1;
+      padding: 10px;
+      overflow-y: auto;
+    }
+    .msg {
+      margin: 8px 0;
+      padding: 10px 14px;
+      border-radius: 15px;
+      max-width: 80%;
+    }
+    .user {
+      background: #caf0f8;
+      align-self: flex-end;
+    }
+    .bot {
+      background: #e9ecef;
+      align-self: flex-start;
+    }
+    .input-area {
+      display: flex;
+      padding: 10px;
+      border-top: 1px solid #ddd;
+    }
+    input {
+      flex: 1;
+      padding: 10px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+    }
+    button {
+      margin-left: 5px;
+      padding: 10px 15px;
+      border: none;
+      background: #0077b6;
+      color: white;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<div class="chat-container">
+  <div class="header">UJORA AI Assistant</div>
+  <div class="chat-box" id="chat"></div>
+  <div class="input-area">
+    <input type="text" id="input" placeholder="Shkruaj pyetjen..." />
+    <button onclick="send()">Dergo</button>
+  </div>
+</div>
+
+<script>
+async function send() {
+  const input = document.getElementById("input");
+  const message = input.value.trim();
+  if (!message) return;
+
+  addMessage(message, "user");
+  input.value = "";
+
+  const res = await fetch("/chat", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ question: message })
+  });
+
+  const data = await res.json();
+  addMessage(data.answer, "bot");
+}
+
+function addMessage(text, type) {
+  const chat = document.getElementById("chat");
+  const msg = document.createElement("div");
+  msg.classList.add("msg", type);
+  msg.textContent = text;
+  chat.appendChild(msg);
+  chat.scrollTop = chat.scrollHeight;
+}
+</script>
+
+</body>
+</html>
